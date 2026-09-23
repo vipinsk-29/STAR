@@ -467,6 +467,13 @@ uint16_t Plugins::FlexCard3::PC_HW_Interface::Light::readValueHWBuffer(bool rese
 
 	const auto length = element.getLength();
 	const auto address = element.getAddress();
+	const auto currentSlotIndex = static_cast<size_t>(slotIndex);
+
+	if (currentSlotIndex >= std::size(r_hwBuffer) || currentSlotIndex >= m_receiveBuffers.size())
+	{
+		LOG(WARNING) << "[readValueHWBuffer] receive buffer index overflow: slotIndex=" << slotIndex;
+		return 1111;
+	}
 
 	if (length == 0)
 	{
@@ -474,29 +481,22 @@ uint16_t Plugins::FlexCard3::PC_HW_Interface::Light::readValueHWBuffer(bool rese
 	}
 
 	// Overwrite the slot data cleanly for this cycle
-	r_hwBuffer[slotIndex].address = address;
-	r_hwBuffer[slotIndex].length = length; // Direct, unified length mapping
+	r_hwBuffer[currentSlotIndex].address = address;
+	r_hwBuffer[currentSlotIndex].length = length; // Direct, unified length mapping
 	
 	if (length > 4)		//PDU will be considered as 0xFF if length > 4
 	{
-		if (slotIndex >= m_receiveBuffers.size())
-		{
-			LOG(WARNING) << "[readValueHWBuffer] receive buffer index overflow: slotIndex=" << slotIndex;
-			return 1111;
-		}
-
-		const auto currentSlotIndex = static_cast<size_t>(slotIndex);
 		auto& receiveBuffer = m_receiveBuffers[currentSlotIndex];
 		receiveBuffer.assign(length, 0xFF);
-		r_hwBuffer[slotIndex].data.buf = receiveBuffer.data();
+		r_hwBuffer[currentSlotIndex].data.buf = receiveBuffer.data();
 	}
 	else				// For lengths <= 4, we can safely use the value field for RAW Signal data. We will initialize it to 0xFFFFFFFF to indicate an uninitialized state.
 	{
 		uint32_t val_1 = 0xFFFFFFFF;
-		r_hwBuffer[slotIndex].data.value = val_1;
+		r_hwBuffer[currentSlotIndex].data.value = val_1;
 	}
 
-	LOG(INFO) << "[readValueHWBuffer] prepared slotIndex=" << slotIndex << ", address=" << r_hwBuffer[slotIndex].address << ", length=" << r_hwBuffer[slotIndex].length << ", data.buf=" << static_cast<const void*>(r_hwBuffer[slotIndex].data.buf);
+	LOG(INFO) << "[readValueHWBuffer] prepared slotIndex=" << slotIndex << ", address=" << r_hwBuffer[currentSlotIndex].address << ", length=" << r_hwBuffer[currentSlotIndex].length << ", data.buf=" << static_cast<const void*>(r_hwBuffer[currentSlotIndex].data.buf);
 
 	return ++slotIndex; // Increment for the next slot
 }
