@@ -9,6 +9,10 @@
 #include <cstring>
 #include <initializer_list>
 #include <type_traits>
+#include <vector>
+
+extern t_hw_com_light_value s_hwBuffer[HW_BUFFER_SIZE];
+extern t_hw_com_light_value r_hwBuffer[HW_BUFFER_SIZE];
 
 namespace Plugins
 {
