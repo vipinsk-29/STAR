@@ -6,7 +6,7 @@
 // Single definition of the shared HW buffer
 t_hw_com_light_value s_hwBuffer[HW_BUFFER_SIZE] = {};
 t_hw_com_light_value r_hwBuffer[HW_BUFFER_SIZE] = {};
-std::vector<uint8_t> m_receiveBuffer;
+std::array<std::vector<uint8_t>, HW_BUFFER_SIZE> m_receiveBuffers;
 
 Plugins::FlexCard3::PC_HW_Interface::Light::PC_HW_Int_Light::PC_HW_Int_Light::PC_HW_Int_Light()
 {
@@ -113,7 +113,7 @@ bool Plugins::FlexCard3::PC_HW_Interface::Light::PC_HW_Int_Light::PC_HW_Int_Ligh
 	t_hw_com_light_error retVal = hw_com_light_values_set(handle_light, values, count, wait);
 
 	if (retVal == HW_COM_LIGHT_ERROR_OK) {
-		LOG(INFO) << this->STAR_PREFIX << "✓ SUCCESS: Handle obtained successfully";
+		LOG(INFO) << this->STAR_PREFIX << "send_buffer succeeded";
 
 		// ✅ 4. Verify handle is valid
 		if (handle_light == nullptr) {
@@ -130,63 +130,63 @@ bool Plugins::FlexCard3::PC_HW_Interface::Light::PC_HW_Int_Light::PC_HW_Int_Ligh
 		{
 		case HW_COM_LIGHT_ERROR_OK:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_OK";
-			return "HW_COM_LIGHT_ERROR_OK";
+			break;
 
 		case HW_COM_LIGHT_ERROR_BAD_PARAMETER:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_BAD_PARAMETER - Invalid parameter provided";
-			return "HW_COM_LIGHT_ERROR_BAD_PARAMETER";
+			break;
 
 		case HW_COM_LIGHT_ERROR_BAD_HANDLE:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_BAD_HANDLE - Invalid hardware handle";
-			return "HW_COM_LIGHT_ERROR_BAD_HANDLE";
+			break;
 
 		case HW_COM_LIGHT_ERROR_FAILED_TO_SEND_REQUEST:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_FAILED_TO_SEND_REQUEST - Failed to send request to hardware";
-			return "HW_COM_LIGHT_ERROR_FAILED_TO_SEND_REQUEST";
+			break;
 
 		case HW_COM_LIGHT_ERROR_FAILED_TO_RECEIVE_RESPONSE:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_FAILED_TO_RECEIVE_RESPONSE - Failed to receive response from hardware";
-			return "HW_COM_LIGHT_ERROR_FAILED_TO_RECEIVE_RESPONSE";
+			break;
 
 		case HW_COM_LIGHT_ERROR_WRONG_RESPONSE_SOURCE:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_WRONG_RESPONSE_SOURCE - Response came from unexpected source";
-			return "HW_COM_LIGHT_ERROR_WRONG_RESPONSE_SOURCE";
+			break;
 
 		case HW_COM_LIGHT_ERROR_OUT_OF_MEMORY:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_OUT_OF_MEMORY - Insufficient memory allocated";
-			return "HW_COM_LIGHT_ERROR_OUT_OF_MEMORY";
+			break;
 
 		case HW_COM_LIGHT_ERROR_FAILED_TO_INIT_WINSOCK:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_FAILED_TO_INIT_WINSOCK - Failed to initialize Windows Socket";
-			return "HW_COM_LIGHT_ERROR_FAILED_TO_INIT_WINSOCK";
+			break;
 
 		case HW_COM_LIGHT_ERROR_BAD_RESPONSE_FORMAT:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_BAD_RESPONSE_FORMAT - Response format is invalid";
-			return "HW_COM_LIGHT_ERROR_BAD_RESPONSE_FORMAT";
+			break;
 
 		case HW_COM_LIGHT_ERROR_RESPONSE_UNKNOWN:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_RESPONSE_UNKNOWN - Unknown response received";
-			return "HW_COM_LIGHT_ERROR_RESPONSE_UNKNOWN";
+			break;
 
 		case HW_COM_LIGHT_ERROR_RESPONSE_INCOMPLETE:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_RESPONSE_INCOMPLETE - Response is incomplete or truncated";
-			return "HW_COM_LIGHT_ERROR_RESPONSE_INCOMPLETE";
+			break;
 
 		case HW_COM_LIGHT_ERROR_BAD_RESPONSE_COUNTER:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_BAD_RESPONSE_COUNTER - Response counter mismatch";
-			return "HW_COM_LIGHT_ERROR_BAD_RESPONSE_COUNTER";
+			break;
 
 		case HW_COM_LIGHT_ERROR_RESPONSE_NACK:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_RESPONSE_NACK - Hardware sent NACK (negative acknowledgment)";
-			return "HW_COM_LIGHT_ERROR_RESPONSE_NACK";
+			break;
 
 		case HW_COM_LIGHT_ERROR_FAILED:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_FAILED - Generic hardware communication failure";
-			return "HW_COM_LIGHT_ERROR_FAILED";
+			break;
 
 		default:
 			LOG(INFO) << "UNKNOWN_ERROR - Unexpected error code: " << static_cast<int>(retVal);
-			return "UNKNOWN_ERROR";
+			break;
 		}
 	}
 	return (retVal == HW_COM_LIGHT_ERROR_OK);
@@ -209,7 +209,7 @@ bool Plugins::FlexCard3::PC_HW_Interface::Light::PC_HW_Int_Light::PC_HW_Int_Ligh
 	t_hw_com_light_error retVal = hw_com_light_values_get(handle_light, values, count);
 
 	if (retVal == HW_COM_LIGHT_ERROR_OK) {
-		LOG(INFO) << this->STAR_PREFIX << "✓ SUCCESS: Handle obtained successfully";
+		LOG(INFO) << this->STAR_PREFIX << "read_buffer succeeded";
 
 		// ✅ 4. Verify handle is valid
 		if (handle_light == nullptr) {
@@ -228,63 +228,63 @@ bool Plugins::FlexCard3::PC_HW_Interface::Light::PC_HW_Int_Light::PC_HW_Int_Ligh
 		{
 		case HW_COM_LIGHT_ERROR_OK:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_OK";
-			return "HW_COM_LIGHT_ERROR_OK";
+			break;
 
 		case HW_COM_LIGHT_ERROR_BAD_PARAMETER:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_BAD_PARAMETER - Invalid parameter provided";
-			return "HW_COM_LIGHT_ERROR_BAD_PARAMETER";
+			break;
 
 		case HW_COM_LIGHT_ERROR_BAD_HANDLE:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_BAD_HANDLE - Invalid hardware handle";
-			return "HW_COM_LIGHT_ERROR_BAD_HANDLE";
+			break;
 
 		case HW_COM_LIGHT_ERROR_FAILED_TO_SEND_REQUEST:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_FAILED_TO_SEND_REQUEST - Failed to send request to hardware";
-			return "HW_COM_LIGHT_ERROR_FAILED_TO_SEND_REQUEST";
+			break;
 
 		case HW_COM_LIGHT_ERROR_FAILED_TO_RECEIVE_RESPONSE:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_FAILED_TO_RECEIVE_RESPONSE - Failed to receive response from hardware";
-			return "HW_COM_LIGHT_ERROR_FAILED_TO_RECEIVE_RESPONSE";
+			break;
 
 		case HW_COM_LIGHT_ERROR_WRONG_RESPONSE_SOURCE:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_WRONG_RESPONSE_SOURCE - Response came from unexpected source";
-			return "HW_COM_LIGHT_ERROR_WRONG_RESPONSE_SOURCE";
+			break;
 
 		case HW_COM_LIGHT_ERROR_OUT_OF_MEMORY:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_OUT_OF_MEMORY - Insufficient memory allocated";
-			return "HW_COM_LIGHT_ERROR_OUT_OF_MEMORY";
+			break;
 
 		case HW_COM_LIGHT_ERROR_FAILED_TO_INIT_WINSOCK:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_FAILED_TO_INIT_WINSOCK - Failed to initialize Windows Socket";
-			return "HW_COM_LIGHT_ERROR_FAILED_TO_INIT_WINSOCK";
+			break;
 
 		case HW_COM_LIGHT_ERROR_BAD_RESPONSE_FORMAT:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_BAD_RESPONSE_FORMAT - Response format is invalid";
-			return "HW_COM_LIGHT_ERROR_BAD_RESPONSE_FORMAT";
+			break;
 
 		case HW_COM_LIGHT_ERROR_RESPONSE_UNKNOWN:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_RESPONSE_UNKNOWN - Unknown response received";
-			return "HW_COM_LIGHT_ERROR_RESPONSE_UNKNOWN";
+			break;
 
 		case HW_COM_LIGHT_ERROR_RESPONSE_INCOMPLETE:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_RESPONSE_INCOMPLETE - Response is incomplete or truncated";
-			return "HW_COM_LIGHT_ERROR_RESPONSE_INCOMPLETE";
+			break;
 
 		case HW_COM_LIGHT_ERROR_BAD_RESPONSE_COUNTER:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_BAD_RESPONSE_COUNTER - Response counter mismatch";
-			return "HW_COM_LIGHT_ERROR_BAD_RESPONSE_COUNTER";
+			break;
 
 		case HW_COM_LIGHT_ERROR_RESPONSE_NACK:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_RESPONSE_NACK - Hardware sent NACK (negative acknowledgment)";
-			return "HW_COM_LIGHT_ERROR_RESPONSE_NACK";
+			break;
 
 		case HW_COM_LIGHT_ERROR_FAILED:
 			LOG(INFO) << "HW_COM_LIGHT_ERROR_FAILED - Generic hardware communication failure";
-			return "HW_COM_LIGHT_ERROR_FAILED";
+			break;
 
 		default:
 			LOG(INFO) << "UNKNOWN_ERROR - Unexpected error code: " << static_cast<int>(retVal);
-			return "UNKNOWN_ERROR";
+			break;
 		}
 	}
 	return (retVal == HW_COM_LIGHT_ERROR_OK);
@@ -467,6 +467,13 @@ uint16_t Plugins::FlexCard3::PC_HW_Interface::Light::readValueHWBuffer(bool rese
 
 	const auto length = element.getLength();
 	const auto address = element.getAddress();
+	const auto currentSlotIndex = static_cast<size_t>(slotIndex);
+
+	if (currentSlotIndex >= std::size(r_hwBuffer) || currentSlotIndex >= m_receiveBuffers.size())
+	{
+		LOG(WARNING) << "[readValueHWBuffer] receive buffer index overflow: slotIndex=" << slotIndex;
+		return 1111;
+	}
 
 	if (length == 0)
 	{
@@ -474,21 +481,22 @@ uint16_t Plugins::FlexCard3::PC_HW_Interface::Light::readValueHWBuffer(bool rese
 	}
 
 	// Overwrite the slot data cleanly for this cycle
-	r_hwBuffer[slotIndex].address = address;
-	r_hwBuffer[slotIndex].length = length; // Direct, unified length mapping
+	r_hwBuffer[currentSlotIndex].address = address;
+	r_hwBuffer[currentSlotIndex].length = length; // Direct, unified length mapping
 	
 	if (length > 4)		//PDU will be considered as 0xFF if length > 4
 	{
-		m_receiveBuffer.assign(length, 0xFF);
-		r_hwBuffer[slotIndex].data.buf = m_receiveBuffer.data();
+		auto& receiveBuffer = m_receiveBuffers[currentSlotIndex];
+		receiveBuffer.assign(length, 0xFF);
+		r_hwBuffer[currentSlotIndex].data.buf = receiveBuffer.data();
 	}
 	else				// For lengths <= 4, we can safely use the value field for RAW Signal data. We will initialize it to 0xFFFFFFFF to indicate an uninitialized state.
 	{
 		uint32_t val_1 = 0xFFFFFFFF;
-		r_hwBuffer[slotIndex].data.value = val_1;
+		r_hwBuffer[currentSlotIndex].data.value = val_1;
 	}
 
-	LOG(INFO) << "[readValueHWBuffer] prepared slotIndex=" << slotIndex << ", address=" << r_hwBuffer[slotIndex].address << ", length=" << r_hwBuffer[slotIndex].length << ", data.buf=" << static_cast<const void*>(r_hwBuffer[slotIndex].data.buf);
+	LOG(INFO) << "[readValueHWBuffer] prepared slotIndex=" << slotIndex << ", address=" << r_hwBuffer[currentSlotIndex].address << ", length=" << r_hwBuffer[currentSlotIndex].length << ", data.buf=" << static_cast<const void*>(r_hwBuffer[currentSlotIndex].data.buf);
 
 	return ++slotIndex; // Increment for the next slot
 }
@@ -500,4 +508,9 @@ uint16_t Plugins::FlexCard3::PC_HW_Interface::Light::readValueHWBuffer(bool rese
 
 void Plugins::FlexCard3::PC_HW_Interface::Light::clearHWBuffer() noexcept {
 	std::memset(s_hwBuffer, 0, sizeof(s_hwBuffer));
+	std::memset(r_hwBuffer, 0, sizeof(r_hwBuffer));
+	for (auto& receiveBuffer : m_receiveBuffers)
+	{
+		receiveBuffer.clear();
+	}
 }

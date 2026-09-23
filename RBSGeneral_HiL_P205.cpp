@@ -29,7 +29,7 @@ void Kernel::FL3X::RBSGeneral_HiL::P205(::model_core::common::time::SimulationTi
 
 	if (P205readSlot_Index > 0)
 	{
-		success = pc_hw_interface_light->read_buffer(this->cardNumber, s_hwBuffer, P205readSlot_Index);
+		success = pc_hw_interface_light->read_buffer(this->cardNumber, r_hwBuffer, P205readSlot_Index);
 		LOG(INFO) << "[RBS General HiL: P205] Entered : readSlot_Index=" << P205readSlot_Index;
 	}
 	
