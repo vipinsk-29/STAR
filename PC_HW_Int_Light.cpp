@@ -467,7 +467,6 @@ uint16_t Plugins::FlexCard3::PC_HW_Interface::Light::readValueHWBuffer(bool rese
 
 	const auto length = element.getLength();
 	const auto address = element.getAddress();
-	const auto currentSlotIndex = static_cast<size_t>(slotIndex);
 
 	if (length == 0)
 	{
@@ -480,12 +479,13 @@ uint16_t Plugins::FlexCard3::PC_HW_Interface::Light::readValueHWBuffer(bool rese
 	
 	if (length > 4)		//PDU will be considered as 0xFF if length > 4
 	{
-		if (currentSlotIndex >= m_receiveBuffers.size())
+		if (slotIndex >= m_receiveBuffers.size())
 		{
 			LOG(WARNING) << "[readValueHWBuffer] receive buffer index overflow: slotIndex=" << slotIndex;
 			return 1111;
 		}
 
+		const auto currentSlotIndex = static_cast<size_t>(slotIndex);
 		auto& receiveBuffer = m_receiveBuffers[currentSlotIndex];
 		receiveBuffer.assign(length, 0xFF);
 		r_hwBuffer[slotIndex].data.buf = receiveBuffer.data();
